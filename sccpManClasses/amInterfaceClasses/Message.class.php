@@ -156,10 +156,10 @@ abstract class Message
                     }
                     if (filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
                         return (boolean) $value;
-                    } elseif (filter_var($value, FILTER_SANITIZE_STRING, FILTER_NULL_ON_FAILURE)) {
-                        return (string) $value;
-                    } elseif (filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_NULL_ON_FAILURE)) {
-                        return (string) htmlspecialchars($value, ENT_QUOTES);
+                    } elseif (is_string($value)) {
+                        $clean = strip_tags($value);
+                        $clean = htmlspecialchars($clean, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                        return $clean;
                     } else {
                         throw new AMIException("Incoming String is not sanitary. Skipping: '" . $value . "'\n");
                     }
