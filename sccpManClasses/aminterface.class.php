@@ -28,6 +28,8 @@ class aminterface
 
     public $paren_class;
     private $_eventListeners;
+    private $_incomingMsgObjectList;
+    private $eventListIsCompleted;
     
     public function load_subspace($parent_class = null)
     {
