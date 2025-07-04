@@ -680,6 +680,46 @@ class Sccp_manager extends \FreePBX_Helpers implements \BMO {
      */
 
     function initializeSccpPath() {
+        $required_keys = [
+            'asterisk_etc_path',
+            'tftp_path',
+            'tftp_templates_path',
+            'tftp_store_path',
+            'tftp_lang_path',
+            'tftp_firmware_path',
+            'tftp_dialplan_path',
+            'tftp_softkey_path',
+            'tftp_countries_path'
+        ];
+        $missing_keys = [];
+        foreach ($required_keys as $key) {
+            if (!isset($this->sccpvalues[$key]) || !isset($this->sccpvalues[$key]['data'])) {
+                $missing_keys[] = $key;
+            }
+        }
+        if (!empty($missing_keys)) {
+            // Attempt autorepair: reload from DB
+            $this->sccpvalues = $this->dbinterface->get_db_SccpSetting();
+            $still_missing = [];
+            foreach ($missing_keys as $key) {
+                if (!isset($this->sccpvalues[$key]) || !isset($this->sccpvalues[$key]['data'])) {
+                    $still_missing[] = $key;
+                }
+            }
+            if (!empty($still_missing)) {
+                // Attempt to insert default values for missing keys
+                foreach ($still_missing as $key) {
+                    $this->sccpvalues[$key] = [
+                        'keyword' => $key,
+                        'seq' => 0,
+                        'type' => 0,
+                        'data' => '',
+                        'systemdefault' => ''
+                    ];
+                }
+                error_log('SCCP Manager: Missing required settings: ' . implode(", ", $still_missing) . '. Autorepair attempted. Please check your configuration.');
+            }
+        }
         $this->sccppath = array(
                     'asterisk' => $this->sccpvalues['asterisk_etc_path']['data'],
                     'tftp_path' => $this->sccpvalues['tftp_path']['data'],
