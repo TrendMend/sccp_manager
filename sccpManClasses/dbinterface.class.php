@@ -14,6 +14,9 @@ class dbinterface
 
     private $val_null = 'NONE'; /// REPLACE to null Field
 
+    private $paren_class;   // Declare property explicitly
+    private $db;            // Declare db property as well
+    
     public function __construct($parent_class = null)
     {
         $this->paren_class = $parent_class;
