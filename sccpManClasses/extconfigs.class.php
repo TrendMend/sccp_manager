@@ -4,6 +4,7 @@ namespace FreePBX\modules\Sccp_manager;
 
 class extconfigs
 {
+    public $sccpvalues = [];
     private $paren_class;
     private $sccpDefaults = array(
         'servername' => 'VPBXSCCP',
