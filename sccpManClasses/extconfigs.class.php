@@ -454,4 +454,20 @@ class extconfigs
         }
         return $res;
     }
+
+    /**
+     * Check if chan-sccp is loaded in Asterisk
+     * @return bool
+     */
+    public static function isChanSccpLoaded() {
+        $output = [];
+        $ret = 0;
+        @exec('asterisk -rx "module show like sccp"', $output, $ret);
+        foreach ($output as $line) {
+            if (stripos($line, 'chan_sccp.so') !== false && stripos($line, 'Running') !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
