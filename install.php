@@ -525,7 +525,7 @@ function InstallDB_updateSchema($db_config)
                         $count_modify ++;
                     }
                     // Have treated this rename so unset. If the newname already exists, have done nothing.
-                    unset($tab_modif[$fld_id]['rename]);
+                    unset($tab_modif[$fld_id]['rename']);
                 }
                 // is there a create for this field
                 if (!empty($tab_modif[$fld_id]['create'])) {
