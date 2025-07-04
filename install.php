@@ -38,7 +38,10 @@ foreach ($requiredClasses as $className) {
         include(__DIR__ . "/sccpManClasses/$className.class.php");
     }
     if (class_exists($class, false)) {
-        ${$className} = new $class();
+        {
+            // Use curly braces for variable variables in strings (PHP 8.2+)
+            ${$className} = new $class();
+        }
     }
 }
 
@@ -403,36 +406,36 @@ function InstallDB_updateSchema($db_config)
     foreach ($priorSchemaFields as $table => $fieldsArr) {
         // First get any data in columns to be deleted ( _Column)
         $sqlMatch = array_reduce($fieldsArr, function($carry, $column) {
-                return "${carry}  ${column} IS NOT NULL OR";
+                return "{$carry}  {$column} IS NOT NULL OR";
         });
         unset($column);
         $sqlFields = array_reduce($fieldsArr, function($carry, $column) {
-                return "${carry}  ${column} AS " . ltrim($column,"_") .",";
+                return "{$carry}  {$column} AS " . ltrim($column,"_") .",";
         });
 
         $sqlMatch = rtrim($sqlMatch, "OR");
         $sqlFields = rtrim($sqlFields, ",");
-        $stmt = $db->prepare("SELECT name, ${sqlFields} FROM ${table} WHERE ${sqlMatch}");
+        $stmt = $db->prepare("SELECT name, {$sqlFields} FROM {$table} WHERE {$sqlMatch}");
         $stmt->execute();
         $dbResult = $stmt->fetchAll(\PDO::FETCH_ASSOC|\PDO::FETCH_UNIQUE);
         // Now move any data found from _Column to Column. This is safe as the two should not exist.
         if (!empty($dbResult)) {
             foreach ($dbResult as $name => $columnArr) {
                 $sqlVar = array_reduce(array_keys($columnArr), function($carry, $key) use ($columnArr){
-                        $carry .= (isset($columnArr[$key])) ? "${key} = '${columnArr[$key]}'," : "";
+                        $carry .= (isset($columnArr[$key])) ? "{$key} = '{$columnArr[$key]}'," : "";
                         return $carry;
                 });
                 $sqlVar = rtrim($sqlVar, ",");
-                $stmt = $db->prepare("UPDATE ${table} SET ${sqlVar} WHERE name = '${name}'");
+                $stmt = $db->prepare("UPDATE {$table} SET {$sqlVar} WHERE name = '{$name}'");
                 $stmt->execute();
             }
         }
         // Processed all _Column names; now safe to delete them
         $sqlDrop = array_reduce($fieldsArr, function($carry, $column) {
-                return "${carry} DROP COLUMN ${column},";
+                return "{$carry} DROP COLUMN {$column},";
         });
         $sqlDrop = rtrim($sqlDrop, ", ");
-        $stmt = $db->prepare("ALTER TABLE ${table} ${sqlDrop}");
+        $stmt = $db->prepare("ALTER TABLE {$table} {$sqlDrop}");
         $stmt->execute();
     }
 
@@ -522,7 +525,7 @@ function InstallDB_updateSchema($db_config)
                         $count_modify ++;
                     }
                     // Have treated this rename so unset. If the newname already exists, have done nothing.
-                    unset($tab_modif[$fld_id]['rename']);
+                    unset($tab_modif[$fld_id]['rename]);
                 }
                 // is there a create for this field
                 if (!empty($tab_modif[$fld_id]['create'])) {
@@ -1051,7 +1054,7 @@ function checkTftpServer() {
     // TODO: Depending on distro, do we have write permissions
     foreach ($possibleFtpDirs as $dirToTest) {
         if (is_dir($dirToTest) && is_writable($dirToTest)) {
-            $tempFile = "${dirToTest}/{$remoteFileName}";
+            $tempFile = "{$dirToTest}/{$remoteFileName}";
             file_put_contents($tempFile, $remoteFileContent);
 
             // try to pull the written file through tftp.
