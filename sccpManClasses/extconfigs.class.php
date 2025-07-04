@@ -460,16 +460,15 @@ class extconfigs
      * @return bool
      */
     public static function isChanSccpLoaded() {
-        return true;
-        // $output = [];
-        // $ret = 0;
-        // // Use full path for reliability
-        // @exec('/usr/sbin/asterisk -rx "module show like sccp"', $output, $ret);
-        // foreach ($output as $line) {
-        //     if (stripos($line, 'chan_sccp.so') !== false && stripos($line, 'Running') !== false) {
-        //         return true;
-        //     }
-        // }
-        // return false;
+        $output = [];
+        $ret = 0;
+        // Use full path for reliability
+        @exec('/usr/sbin/asterisk -rx "module show like sccp"', $output, $ret);
+        foreach ($output as $line) {
+            if (stripos($line, 'chan_sccp.so') !== false && stripos($line, 'Running') !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 }
