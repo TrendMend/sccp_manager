@@ -19,6 +19,7 @@ class xmlinterface
     private $val_null = 'NONE'; /// REPLACE to null Field
 
     private $paren_class;
+    private $langCodeArray;
     
     public function __construct($parent_class = null)
     {
