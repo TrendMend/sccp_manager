@@ -4,6 +4,8 @@ namespace FreePBX\modules\Sccp_manager;
 
 class extconfigs
 {
+    private $paren_class;
+    
     public function __construct($parent_class = null)
     {
         $this->paren_class = $parent_class;
