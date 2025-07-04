@@ -18,6 +18,8 @@ class xmlinterface
     use \FreePBX\modules\Sccp_Manager\sccpManTraits\helperFunctions;
     private $val_null = 'NONE'; /// REPLACE to null Field
 
+    private $paren_class;
+    
     public function __construct($parent_class = null)
     {
         $this->paren_class = $parent_class;
