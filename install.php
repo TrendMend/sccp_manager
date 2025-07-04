@@ -38,11 +38,16 @@ foreach ($requiredClasses as $className) {
         include(__DIR__ . "/sccpManClasses/$className.class.php");
     }
     if (class_exists($class, false)) {
-        {
-            // Use curly braces for variable variables in strings (PHP 8.2+)
-            ${$className} = new $class();
-        }
+        // Use curly braces for variable variables in strings (PHP 8.2+)
+        ${$className} = new $class();
     }
+}
+
+// Robustly check if chan-sccp is loaded
+if (!\FreePBX\modules\Sccp_manager\extconfigs::isChanSccpLoaded()) {
+    outn("<br>");
+    outn("<font color='red'>chan-sccp not found or not running. Install and load it before continuing!</font>");
+    die();
 }
 
 CheckAsteriskVersion();
