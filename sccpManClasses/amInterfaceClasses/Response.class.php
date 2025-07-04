@@ -16,6 +16,7 @@ abstract class Response extends IncomingMessage
     protected $_events;
     protected $_completed;
     protected $keys;
+    protected $eventListIsCompleted = false;
 
     public function __construct($rawContent)
     {
