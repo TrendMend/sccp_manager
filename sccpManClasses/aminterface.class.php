@@ -26,6 +26,8 @@ class aminterface
     private $_incomingRawMessage;
     private $eventListEndEvent;
 
+    public $paren_class;
+
     public function load_subspace($parent_class = null)
     {
         $driverNamespace = "\\FreePBX\\Modules\\Sccp_manager\\aminterface";
