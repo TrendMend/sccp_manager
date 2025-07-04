@@ -31,6 +31,7 @@ class aminterface
     private $_incomingMsgObjectList;
     private $eventListIsCompleted;
     private $_context;
+    public $useAmiInterface = true; 
     
     public function load_subspace($parent_class = null)
     {
