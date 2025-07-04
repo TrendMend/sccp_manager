@@ -460,7 +460,7 @@ class extconfigs
      * @return bool
      */
     public static function isChanSccpLoaded() {
-        return true
+        return true;
         // $output = [];
         // $ret = 0;
         // // Use full path for reliability
