@@ -25,7 +25,6 @@ class aminterface
     private $debug_level = 1;
     private $_incomingRawMessage;
     private $eventListEndEvent;
-
     public $paren_class;
     private $_eventListeners;
     private $_incomingMsgObjectList;

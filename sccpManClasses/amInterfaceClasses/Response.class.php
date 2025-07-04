@@ -179,6 +179,7 @@ class SCCPGeneric_Response extends Response
 {
     protected $_tables;
     private $_temptable;
+    private $eventListEndEvent;
 
     public function __construct($rawContent)
     {

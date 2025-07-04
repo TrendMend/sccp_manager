@@ -5,7 +5,6 @@ namespace FreePBX\modules\Sccp_manager;
 class formcreate
 {
     use \FreePBX\modules\Sccp_Manager\sccpManTraits\helperFunctions;
-    
     private $buttonDefLabel;
     private $buttonHelpLabel;
     

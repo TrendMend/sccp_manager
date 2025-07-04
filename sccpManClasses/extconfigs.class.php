@@ -5,98 +5,6 @@ namespace FreePBX\modules\Sccp_manager;
 class extconfigs
 {
     private $paren_class;
-    
-    public function __construct($parent_class = null)
-    {
-        $this->paren_class = $parent_class;
-    }
-
-    public function info() {
-        $Ver = '13.2.0';
-        return array('Version' => $Ver,
-            'about' => 'Default Settings and Enums ver: ' . $Ver);
-    }
-
-    public function getExtConfig($id = '', $index = '') {
-        $result = array();
-        switch ($id) {
-            case 'keyset':
-                $result = $this->keysetdefault;
-                break;
-            case 'sccp_lang':
-                if (empty($index)) {
-                    return $this->cisco_language;  // return language array
-                } elseif (!empty($this->cisco_language[$index])) {
-                    return $this->cisco_language[$index]; // return the matched value
-                }
-                break;
-            case 'sccpDefaults':
-                $result = $this->sccpDefaults;
-                break;
-            case 'sccp_timezone': // Sccp manager: 1303; server_info: 122
-                $result = array();
-
-                if (empty($index)) {
-                    return array('offset' => '00', 'daylight' => '', 'cisco_code' => 'Greenwich Standard Time');
-                }
-
-                //See if DST is used in this TZ. Test if DST setting is different at
-                //various future intervals. If dst changes, this TZ uses dst
-                $usesDaylight = false;
-                $haveDstNow = date('I');
-                $futureDateArray = array(2,4,6,8);
-                foreach ($futureDateArray as $numMonths) {
-                    $futureDate = (new \DateTime(null,new \DateTimeZone($index)))->modify("+{$numMonths} months");
-                    if ($futureDate->format('I') != $haveDstNow) {
-                        $usesDaylight = true;
-                        break;
-                    };
-                }
-                $thisTzOffset = (new \DateTime(null, new \DateTimeZone($index)))->getOffset();
-
-                // Now look for a match in cisco_tz_array based on offset and DST
-                // First correct offset if we have DST now as cisco offsets are
-                // based on non dst offsets
-                $tmpOffset = $thisTzOffset / 60;
-                if ($haveDstNow) {
-                    $tmpOffset = $tmpOffset - 60;
-                }
-                foreach ($this->cisco_timezone as $key => $value) {
-                    if (($value['offset'] == $tmpOffset) and ( $value['daylight'] == $usesDaylight )) {
-                        // This code may not be the one typically used, but it has the correct values.
-                        $cisco_code = $key . ' Standard' . (($usesDaylight) ? '/Daylight' : '') . ' Time';
-
-                        $this->sccpvalues['tzoffset']['data'] = $tmpOffset;
-
-                        return array('offset' => $tmpOffset, 'daylight' => ($usesDaylight) ? 'Daylight' : '', 'cisco_code' => $cisco_code);
-                        break;
-                    }
-                }
-                return array('offset' => '00', 'daylight' => '', 'cisco_code' => 'Greenwich Standard Time');
-
-                break;
-            default:
-                return array('noId');
-                break;
-        }
-        if (empty($index)) {
-            return $result;
-        } else {
-            if (isset($result[$index])) {
-                return $result[$index];
-            } else {
-                return array();
-            }
-        }
-    }
-
-    private function get_cisco_time_zone($tzc)
-    {
-        $tzdata = $this->cisco_timezone[$tzc];
-        $cisco_code = $tzc . ' Standard' . (($tzdata['daylight']) ? '/Daylight' : '') . ' Time';
-        return array('offset' => $tzdata['offset'], 'daylight' => $tzdata['daylight'], 'cisco_code' => $cisco_code);
-    }
-
     private $sccpDefaults = array(
         'servername' => 'VPBXSCCP',
         'bindaddr' => '0.0.0.0', "port" => '2000', # chan_sccp also supports ipv6
@@ -236,6 +144,97 @@ class extconfigs
         'Fiji' => array('offset' => '720', 'daylight' => false),
         'New Zealand' => array('offset' => '720', 'daylight' => true)
     );
+
+    public function __construct($parent_class = null)
+    {
+        $this->paren_class = $parent_class;
+    }
+
+    public function info() {
+        $Ver = '13.2.0';
+        return array('Version' => $Ver,
+            'about' => 'Default Settings and Enums ver: ' . $Ver);
+    }
+
+    public function getExtConfig($id = '', $index = '') {
+        $result = array();
+        switch ($id) {
+            case 'keyset':
+                $result = $this->keysetdefault;
+                break;
+            case 'sccp_lang':
+                if (empty($index)) {
+                    return $this->cisco_language;  // return language array
+                } elseif (!empty($this->cisco_language[$index])) {
+                    return $this->cisco_language[$index]; // return the matched value
+                }
+                break;
+            case 'sccpDefaults':
+                $result = $this->sccpDefaults;
+                break;
+            case 'sccp_timezone': // Sccp manager: 1303; server_info: 122
+                $result = array();
+
+                if (empty($index)) {
+                    return array('offset' => '00', 'daylight' => '', 'cisco_code' => 'Greenwich Standard Time');
+                }
+
+                //See if DST is used in this TZ. Test if DST setting is different at
+                //various future intervals. If dst changes, this TZ uses dst
+                $usesDaylight = false;
+                $haveDstNow = date('I');
+                $futureDateArray = array(2,4,6,8);
+                foreach ($futureDateArray as $numMonths) {
+                    $futureDate = (new \DateTime(null,new \DateTimeZone($index)))->modify("+{$numMonths} months");
+                    if ($futureDate->format('I') != $haveDstNow) {
+                        $usesDaylight = true;
+                        break;
+                    };
+                }
+                $thisTzOffset = (new \DateTime(null, new \DateTimeZone($index)))->getOffset();
+
+                // Now look for a match in cisco_tz_array based on offset and DST
+                // First correct offset if we have DST now as cisco offsets are
+                // based on non dst offsets
+                $tmpOffset = $thisTzOffset / 60;
+                if ($haveDstNow) {
+                    $tmpOffset = $tmpOffset - 60;
+                }
+                foreach ($this->cisco_timezone as $key => $value) {
+                    if (($value['offset'] == $tmpOffset) and ( $value['daylight'] == $usesDaylight )) {
+                        // This code may not be the one typically used, but it has the correct values.
+                        $cisco_code = $key . ' Standard' . (($usesDaylight) ? '/Daylight' : '') . ' Time';
+
+                        $this->sccpvalues['tzoffset']['data'] = $tmpOffset;
+
+                        return array('offset' => $tmpOffset, 'daylight' => ($usesDaylight) ? 'Daylight' : '', 'cisco_code' => $cisco_code);
+                        break;
+                    }
+                }
+                return array('offset' => '00', 'daylight' => '', 'cisco_code' => 'Greenwich Standard Time');
+
+                break;
+            default:
+                return array('noId');
+                break;
+        }
+        if (empty($index)) {
+            return $result;
+        } else {
+            if (isset($result[$index])) {
+                return $result[$index];
+            } else {
+                return array();
+            }
+        }
+    }
+
+    private function get_cisco_time_zone($tzc)
+    {
+        $tzdata = $this->cisco_timezone[$tzc];
+        $cisco_code = $tzc . ' Standard' . (($tzdata['daylight']) ? '/Daylight' : '') . ' Time';
+        return array('offset' => $tzdata['offset'], 'daylight' => $tzdata['daylight'], 'cisco_code' => $cisco_code);
+    }
 
     public function updateTftpStructure($settingsFromDb) {
         global $amp_conf;

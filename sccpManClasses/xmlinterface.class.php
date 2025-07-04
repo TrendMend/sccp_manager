@@ -17,10 +17,9 @@ class xmlinterface
 {
     use \FreePBX\modules\Sccp_Manager\sccpManTraits\helperFunctions;
     private $val_null = 'NONE'; /// REPLACE to null Field
-
     private $paren_class;
     private $langCodeArray;
-    
+
     public function __construct($parent_class = null)
     {
         $this->paren_class = $parent_class;
@@ -276,6 +275,8 @@ class xmlinterface
                                     $xnode_obj = clone $xnode->member;
                                     $xnode_obj['priority'] = $ifc;
                                     $xnode_obj->callManager->name = $data_values['servername'];
+                                    $xnode_obj->callManager->ports->ethernetPhonePort = $bind_value['port'];
+                                    $xnode_obj->callManager->processNodeName = $bind_value['ip'];
                                     if (!is_null($xnode_obj->callManager->description)) {
                                         $xnode_obj->callManager->description = $data_values['servername'];
                                     }

@@ -13,7 +13,6 @@ class dbinterface
 {
 
     private $val_null = 'NONE'; /// REPLACE to null Field
-
     private $paren_class;   // Declare property explicitly
     private $db;            // Declare db property as well
     
