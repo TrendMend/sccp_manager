@@ -16,7 +16,8 @@ abstract class Event extends IncomingMessage
 {
 
     protected $_events;
-
+    protected bool $_completed = false;
+    
     public function getName()
     {
         return $this->getKey('Event');
